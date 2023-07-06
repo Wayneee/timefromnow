@@ -1,0 +1,72 @@
+
+
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.csss" rel="stylesheet" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/1.35.0/iconfont/tabler-icons.min.css" rel="stylesheet" />
+<div class="container">
+  <div class="input-group mb-3">
+    <input type="number" id="initHour" min="0" max="24" class="form-control" placeholder="From now" aria-label="From now" aria-describedby="button-addon2">
+    <button class="btn btn-outline-primary" type="button" id="GenerateButton"><span class="ti ti-refresh" aria-hidden="true"></span></button>
+  </div>
+  <div class="panel panel-default">
+    <div class="panel panel-body">
+      <ul id="result" class="list-group"> </ul>
+    </div>
+  </div>
+</div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/js/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+<script>function generateList() {
+  let result = [];
+  let now = new moment();
+
+  if ($("#initHour").val() != "") {
+    now.hour($("#initHour").val());
+  }
+
+  for (let i = 2; i < 13; i++) {
+    result.push({
+      duration: i,
+      time: new moment(now).add(i, "hours")
+    });
+  }
+
+  $("#result").text("");
+
+  $(result).each(function (index, value) {
+    let keyTimeStyle =
+      value.time.hour() == 6
+        ? "list-group-item-primary"
+        : "list-group-item-success";
+    let todayStyle =
+      value.time.date() == new moment().date()
+        ? "list-group-item-secondary"
+        : keyTimeStyle;
+
+    let keyTimeBadgeStyle = [7, 8, 9].includes(value.duration)
+      ? "bg-success"
+      : "bg-primary";
+
+    $("#result").append(
+      $("<li />", {
+        text: value.time.format("h:mm A"),
+        class:
+          "list-group-item d-flex justify-content-between align-items-center " +
+          todayStyle
+      }).append(
+        $("<span />", {
+          text: "+" + value.duration,
+          class: "badge rounded-pill " + keyTimeBadgeStyle
+        })
+      )
+    );
+  });
+}
+
+$(function () {
+  $("#GenerateButton").click(generateList);
+
+  generateList();
+});
+</script>
